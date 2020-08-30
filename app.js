@@ -12,7 +12,7 @@ const render = require("./lib/htmlRenderer");
 const { start } = require("repl");
 const { create } = require("domain");
 
-let teamMembers = [];
+const teamMembers = [];
 
 // function start() {
 //     createTeam();
@@ -84,7 +84,7 @@ function createTeam() {
             choices: ["Engineer", "Intern", "I'm done."]
         },
     ]).then(function(answers) {
-        switch (answers.name) {
+        switch (answers.role) {
             case "Engineer":
                 createEngineer();
                 break;
@@ -92,12 +92,13 @@ function createTeam() {
                 createIntern();
                 break;
             case "I'm done.":
-                buildTeam();
+                console.log(teamMembers)
+                saveUsers();
                 default:
                     break;
         }
-    })
-}
+    });
+};
 
 function createEngineer() {
     inquirer.prompt([
@@ -151,8 +152,8 @@ function createEngineer() {
         teamMembers.push(engineer);
 
         createTeam();
-    })
-}
+    });
+};
 
 function createIntern() {
     inquirer.prompt([
@@ -211,6 +212,13 @@ function createIntern() {
 console.log(teamMembers);
 
 createManager()
+
+const saveUsers = () => {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+      fs.mkdirSync(OUTPUT_DIR);
+    }
+    fs.writeFileSync(outputPath, render(teamMembers), "utf-8");
+  };
 
 
 

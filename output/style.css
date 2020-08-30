@@ -1,0 +1,38 @@
+body {
+    background-image: url(../Assets/denver-skyline-at-night-historical.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+.jumbotron {
+    color: white;
+    background-color: rgb(104, 104, 252);
+    border-bottom: solid 1px black;
+}
+
+.card-header {
+    color: white;
+    background-color: salmon;
+}
+
+.card {
+    margin: 5px;
+    border: 1px solid black;
+    box-shadow: 5px 5px 5px black;
+}
+
+.card-body {
+    background-color: rgb(230, 230, 230);
+}
+
+footer {
+    background-color: darkslategray;
+    color: white;
+    text-align: center;
+    border-top: 2px lightslategray solid;
+    padding: 10px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
