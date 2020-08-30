@@ -10,6 +10,116 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+let team = [];
+
+
+const managerQuestions = [
+    {
+        message: "What is the manager's name?",
+        type: "input",
+        name: "name",
+        validate: async (input) => {
+            if (input == "" || /\s/.test(input)) {
+                return "Please enter a valid first or last name!";
+            }
+            return true;
+        }
+    },
+    {
+        message: "What is the manager's email address?",
+        type: "input",
+        name: "email",
+        validate: async (input) => {
+            if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/.test(input)){
+                return true;
+            }
+            return "Please enter a valid email address!";
+        }
+    },
+    {
+        message: "What is the manager's office phone number?",
+        type: "input",
+        name: "officeNumber",
+        validate: async (input) => {
+            if (isNaN(input)) {
+                return "Please enter a valid phone number!";
+            }
+            return true;
+        }
+    },
+    {
+        message: "Does this manager have team members?",
+        type: "list",
+        name: "Team",
+        choices: ["Yes", "No"]
+    }
+]
+
+const employeeQuestions = [
+    {
+        message: "Please enter the employee's name.",
+        type: "input",
+        name: "name",
+        validate: async (input) => {
+            if (input == "") {
+                return "Please enter a valid first or last name!";
+            }
+            return true;
+        }
+    },
+    {
+        message: "Please enter the employee's email address.",
+        type: "input",
+        name: "name",
+        validate: async (input) => {
+            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(input)) {
+                return true;
+            }
+            return "Please enter a valid email address!";
+        }
+    },
+    {
+        message: "What is this employee's role?",
+        type: "list",
+        name: "role",
+        choices: ["Engineer", "Intern"]
+    },
+    {
+        when: input => {
+            return input.role == "Engineer"
+        },
+        message: "Please enter the engineer's GitHub username.",
+        type: "input",
+        name: "github",
+        validate: async (input) => {
+            if (input == "" || /\s/.test(input)) {
+                return "Please enter a valid GitHub username!";
+            }
+            return true;
+        }
+    },
+    {
+        when: input => {
+            return input.role == "Intern"
+        },
+        message: "What school did the intern attend?",
+        type: "input",
+        name: "school",
+        validate: async (input) => {
+            if (input == "") {
+                return "Please enter a valid school name!";
+            }
+            return true;
+        }
+    },
+    {
+        message: "Would you like to add another team member?",
+        type: "list",
+        name: "addEmployee",
+        choices: ["Yes", "No"]
+    }
+]
+
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
