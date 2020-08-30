@@ -9,116 +9,209 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const { start } = require("repl");
+const { create } = require("domain");
 
-let team = [];
+let teamMembers = [];
+
+// function start() {
+//     createTeam();
+// }
+// start()
 
 
-const managerQuestions = [
-    {
-        message: "What is the manager's name?",
-        type: "input",
-        name: "name",
-        validate: async (input) => {
-            if (input == "" || /\s/.test(input)) {
-                return "Please enter a valid first or last name!";
-            }
-            return true;
-        }
-    },
-    {
-        message: "What is the manager's email address?",
-        type: "input",
-        name: "email",
-        validate: async (input) => {
-            if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/.test(input)){
+function createManager() {
+    inquirer.prompt([
+        {
+            message: "What is the manager's name?",
+            type: "input",
+            name: "name",
+            validate: async (input) => {
+                if (input == "" || /\s/.test(input)) {
+                    return "Please enter a valid first or last name!";
+                }
                 return true;
             }
-            return "Please enter a valid email address!";
-        }
-    },
-    {
-        message: "What is the manager's office phone number?",
-        type: "input",
-        name: "officeNumber",
-        validate: async (input) => {
-            if (isNaN(input)) {
-                return "Please enter a valid phone number!";
-            }
-            return true;
-        }
-    },
-    {
-        message: "Does this manager have team members?",
-        type: "list",
-        name: "Team",
-        choices: ["Yes", "No"]
-    }
-]
-
-const employeeQuestions = [
-    {
-        message: "Please enter the employee's name.",
-        type: "input",
-        name: "name",
-        validate: async (input) => {
-            if (input == "") {
-                return "Please enter a valid first or last name!";
-            }
-            return true;
-        }
-    },
-    {
-        message: "Please enter the employee's email address.",
-        type: "input",
-        name: "name",
-        validate: async (input) => {
-            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(input)) {
+        },
+        {
+            message: "What is the manager's ID?",
+            type: "input",
+            name: "id",
+            validate: async (input) => {
+                if (input == "" || /\s/.test(input)) {
+                    return "Please enter a valid ID!";
+                }
                 return true;
             }
-            return "Please enter a valid email address!";
-        }
-    },
-    {
-        message: "What is this employee's role?",
-        type: "list",
-        name: "role",
-        choices: ["Engineer", "Intern"]
-    },
-    {
-        when: input => {
-            return input.role == "Engineer"
+
         },
-        message: "Please enter the engineer's GitHub username.",
-        type: "input",
-        name: "github",
-        validate: async (input) => {
-            if (input == "" || /\s/.test(input)) {
-                return "Please enter a valid GitHub username!";
+        {
+            message: "What is the manager's email address?",
+            type: "input",
+            name: "email",
+            validate: async (input) => {
+                if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/.test(input)){
+                    return true;
+                }
+                return "Please enter a valid email address!";
             }
-            return true;
-        }
-    },
-    {
-        when: input => {
-            return input.role == "Intern"
         },
-        message: "What school did the intern attend?",
-        type: "input",
-        name: "school",
-        validate: async (input) => {
-            if (input == "") {
-                return "Please enter a valid school name!";
+        {
+            message: "What is the manager's office phone number?",
+            type: "input",
+            name: "officeNumber",
+            validate: async (input) => {
+                if (isNaN(input)) {
+                    return "Please enter a valid phone number!";
+                }
+                return true;
             }
-            return true;
         }
-    },
-    {
-        message: "Would you like to add another team member?",
-        type: "list",
-        name: "addEmployee",
-        choices: ["Yes", "No"]
-    }
-]
+    ]).then(function(answers) {
+        const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber)
+        teamMembers.push(manager);
+
+        createTeam();
+    })
+}
+
+function createTeam() {
+    inquirer.prompt([
+        {
+            message: "What team member would you like to create?",
+            type: "list",
+            name: "role",
+            choices: ["Engineer", "Intern", "I'm done."]
+        },
+    ]).then(function(answers) {
+        switch (answers.name) {
+            case "Engineer":
+                createEngineer();
+                break;
+            case "Intern":
+                createIntern();
+                break;
+            case "I'm done.":
+                buildTeam();
+                default:
+                    break;
+        }
+    })
+}
+
+function createEngineer() {
+    inquirer.prompt([
+        {
+            message: "Please enter the engineer's name.",
+            type: "input",
+            name: "name",
+            validate: async (input) => {
+                if (input == "") {
+                    return "Please enter a valid first or last name!";
+                }
+                return true;
+            }
+        },
+        {
+            message: "What is the engineer's ID?",
+            type: "input",
+            name: "id",
+            validate: async (input) => {
+                if (input == "" || /\s/.test(input)) {
+                    return "Please enter a valid ID!";
+                }
+                return true;
+            }
+
+        },
+        {
+            message: "Please enter the engineer's email address.",
+            type: "input",
+            name: "email",
+            validate: async (input) => {
+                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(input)) {
+                    return true;
+                }
+                return "Please enter a valid email address!";
+            }
+        },
+        {
+            message: "Please enter the engineer's GitHub username.",
+            type: "input",
+            name: "github",
+            validate: async (input) => {
+                if (input == "" || /\s/.test(input)) {
+                    return "Please enter a valid GitHub username!";
+                }
+                return true;
+            }
+        }
+    ]).then(function(answers){
+        const engineer = new Engineer(answers.name, answers.id, answers.email, answers.github)
+        teamMembers.push(engineer);
+
+        createTeam();
+    })
+}
+
+function createIntern() {
+    inquirer.prompt([
+        {
+            message: "Please enter the intern's name.",
+            type: "input",
+            name: "name",
+            validate: async (input) => {
+                if (input == "") {
+                    return "Please enter a valid first or last name!";
+                }
+                return true;
+            }
+        },
+        {
+            message: "What is the intern's ID?",
+            type: "input",
+            name: "id",
+            validate: async (input) => {
+                if (input == "" || /\s/.test(input)) {
+                    return "Please enter a valid ID!";
+                }
+                return true;
+            }
+        },
+        {
+            message: "Please enter the intern's email address.",
+            type: "input",
+            name: "email",
+            validate: async (input) => {
+                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(input)) {
+                    return true;
+                }
+                return "Please enter a valid email address!";
+            }
+        },
+        {
+            message: "What school did the intern attend?",
+            type: "input",
+            name: "school",
+            validate: async (input) => {
+                if (input == "") {
+                    return "Please enter a valid school name!";
+                }
+                return true;
+            }
+        }
+    ]).then(function(answers) {
+        const intern = new Intern(answers.name, answers.id, answers.email, answers.school)
+        teamMembers.push(intern);
+
+        createTeam();
+    })
+}
+
+console.log(teamMembers);
+
+createManager()
+
 
 
 // Write code to use inquirer to gather information about the development team members,
