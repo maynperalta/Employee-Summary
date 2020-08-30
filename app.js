@@ -14,12 +14,6 @@ const { create } = require("domain");
 
 const teamMembers = [];
 
-// function start() {
-//     createTeam();
-// }
-// start()
-
-
 function createManager() {
     inquirer.prompt([
         {
