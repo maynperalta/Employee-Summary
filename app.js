@@ -9,10 +9,12 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-const { start } = require("repl");
-const { create } = require("domain");
+
+//Empty array to push team members into.
 
 const teamMembers = [];
+
+//Function to create manager employee information along with inquirer prompts.
 
 function createManager() {
     inquirer.prompt([
@@ -69,6 +71,8 @@ function createManager() {
     })
 }
 
+//Switch/Case for engineer/intern roles.
+
 function createTeam() {
     inquirer.prompt([
         {
@@ -93,6 +97,8 @@ function createTeam() {
         }
     });
 };
+
+//Function if Engineer is selected in previous inquirer prompt with questions.
 
 function createEngineer() {
     inquirer.prompt([
@@ -149,6 +155,8 @@ function createEngineer() {
     });
 };
 
+//Function if Intern is selected instead of Engineer.
+
 function createIntern() {
     inquirer.prompt([
         {
@@ -203,7 +211,11 @@ function createIntern() {
     })
 }
 
+//Call to fire createManager function upon typing node command.
+
 createManager()
+
+//saveUsers function to write and generate HTML file. 
 
 const saveUsers = () => {
     if (!fs.existsSync(OUTPUT_DIR)) {
